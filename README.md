@@ -20,7 +20,7 @@ After installing, open the extension's config menu.
 ![Picture of extension config page](instructions.png)
 
 Enter your discord webhook URL and the CTF website.
-- "https://" and "/" will be added to the start and removed from the end of the target website respectively.
+- `https://` and `/` will be added to the start and removed from the end of the target website respectively.
 
 # Usage
 

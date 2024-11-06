@@ -18,22 +18,29 @@
       <p>The extension will not work until both options are filled in!</p>
       <div class="flex">
         <label>
-          Enter Discord Webhook:
+          Discord Webhook:
           <input type="text" id="webhook">
         </label>
       </div>
       <div class="flex">
         <label>
-          Enter CTF website:
+          CTF website:
           <input type="text" id="target">
         </label>
       </div>
       <span style="border-style: solid; border-color: darkgray;"></span>
-      <div>
+      <div class="flex">
+        <label>
+          Username:
+          <input type="text" id="username">
+        </label>
+      </div>
+      <div style="display: flex; flex-direction: row; justify-content: space-between">
         <label>
           Enable?
           <input type="checkbox" id="enabled">
         </label>
+        <p id="status">Status: ...</p>
       </div>
       <button type="submit">Save</button>
     </form>
