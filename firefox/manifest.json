@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Flag Vault",
-  "description": "Automatic flag hoarder for CTFd websites, with Discord integration.",
+  "description": "Automatic flag hoarder for CTFd websites",
   "version": "1.0",
   "permissions": [
     "webRequest",

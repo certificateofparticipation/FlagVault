@@ -6,6 +6,15 @@ A browser extension to automatically flag hoard on CTFd websites.
 
 Currently only Firefox is supported.
 
+# Installation
+
+Download the extension file from the [releases page](https://github.com/certificateofparticipation/FlagVault/releases).
+
+On Firefox:
+- Go to `about:addons`
+- Drag the downloaded `FlagVault.xpi` into the page
+- Accept warning(s)
+
 # Setup
 
 After installing, open the extension's config menu.
