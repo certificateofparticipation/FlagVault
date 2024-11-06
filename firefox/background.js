@@ -9,7 +9,7 @@ let submission;
 async function returnEarly(details) {
     let webhookObject = await browser.storage.local.get("webhook");
     let targetObject = await browser.storage.local.get("target");
-    if (!(webhookObject && targetObject)) {
+    if (Object.keys(webhookObject).length <= 0 && Object.keys(targetObject).length <= 0) {
         return true
     }
     if (details.url !== targetObject.target + "/api/v1/challenges/attempt") {

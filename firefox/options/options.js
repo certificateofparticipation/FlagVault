@@ -8,9 +8,14 @@ const body = document.querySelector("body");
 
 async function saveWebhook(event) {
     event.preventDefault();
-    let webhook = webhookInput.value;
-    let target1 = (targetInput.value.startsWith("https://") ? targetInput.value : ("https://" + targetInput.value))
-    let target = (target1.endsWith("/") ? target1.slice(0, -1) : target1);
+    let webhook = (webhookInput.value === "" ? undefined : webhookInput.value);
+    let target;
+    if (targetInput.value === "") {
+        target = undefined;
+    } else {
+        let target1 = (targetInput.value.startsWith("https://") ? targetInput.value : ("https://" + targetInput.value))
+        target = (target1.endsWith("/") ? target1.slice(0, -1) : target1);
+    }
     let enabled = enabledInput.checked;
 
     await browser.storage.local.set({
@@ -32,17 +37,17 @@ async function saveWebhook(event) {
 
 async function prefillOption() {
     let webhook = await browser.storage.local.get("webhook");
-    if (webhook !== undefined) {
+    if (Object.keys(webhook).length > 0) {
         webhookInput.value = webhook.webhook;
     }
 
     let target = await browser.storage.local.get("target");
-    if (target !== undefined) {
+    if (Object.keys(target).length > 0) {
         targetInput.value = target.target;
     }
 
     let enabled = await browser.storage.local.get("enabled");
-    if (enabled !== undefined) {
+    if (Object.keys(enabled).length > 0) {
         enabledInput.checked = enabled.enabled;
     }
 }

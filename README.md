@@ -11,8 +11,6 @@ Currently only Firefox is supported.
 Download the extension file from the [releases page](https://github.com/certificateofparticipation/FlagVault/releases).
 
 On Firefox:
-- Go to `about:addons`
-- Drag the downloaded `FlagVault.xpi` into the page
 - Accept warning(s)
 
 # Setup
