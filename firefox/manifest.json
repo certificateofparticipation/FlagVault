@@ -1,0 +1,29 @@
+{
+  "manifest_version": 2,
+  "name": "Flag Vault",
+  "description": "Automatic flag hoarder for CTFd websites, with Discord integration.",
+  "version": "1.0",
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "storage",
+    "<all_urls>"
+  ],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "browser_action": {
+    "default_popup": "options/options.html"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "flagvault@diffusehyperion.com"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "64": "icons/icon-64.png",
+    "128": "icons/icon-128.png"
+  }
+}

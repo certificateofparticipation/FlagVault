@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <title>Config</title>
+    <style>
+      .flex {
+        display: flex;
+        flex-direction: column;
+      }
+      p {
+        margin: 0;
+      }
+    </style>
+  </head>
+
+  <body class="flex" style="row-gap: 1rem">
+    <form id="form" class="flex" style="row-gap: 0.5rem">
+      <p>The extension will not work until both options are filled in!</p>
+      <div class="flex">
+        <label>
+          Enter Discord Webhook:
+          <input type="text" id="webhook">
+        </label>
+      </div>
+      <div class="flex">
+        <label>
+          Enter CTF website:
+          <input type="text" id="target">
+        </label>
+      </div>
+      <span style="border-style: solid; border-color: darkgray;"></span>
+      <div>
+        <label>
+          Enable?
+          <input type="checkbox" id="enabled">
+        </label>
+      </div>
+      <button type="submit">Save</button>
+    </form>
+    <script src="options.js"></script>
+  </body>
+</html>
