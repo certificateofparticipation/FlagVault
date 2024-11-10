@@ -19,7 +19,7 @@ When active, all submissions of answers will be sent to a discord webhook of you
       2. Turn on `Developer Mode`
       3. Click on `Load unpacked`
       4. Select `src`
-      (![](pictures/installation-chrome.png)
+      ![](pictures/installation-chrome.png)
       5. Ignore the error that pops up (dumb chrome compatability issues)
 
 # Setup
