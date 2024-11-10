@@ -1,5 +1,5 @@
 async function getStorage(item) {
-    const object = await browser.storage.local.get(item);
+    const object = await chrome.storage.local.get(item);
     if (Object.keys(object).length > 0) {
         return object[item]
     } else {

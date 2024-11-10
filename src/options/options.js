@@ -23,7 +23,7 @@ function getHostname(url) {
 }
 
 async function getStorage(item) {
-    const object = await browser.storage.local.get(item);
+    const object = await chrome.storage.local.get(item);
     if (Object.keys(object).length > 0) {
         return object[item]
     } else {
@@ -39,7 +39,7 @@ async function saveData(event) {
     const enabled = enabledInput.checked;
     const username = standardizeInput(usernameInput.value);
 
-    await browser.storage.local.set({
+    await chrome.storage.local.set({
         webhook: webhook,
         target: target,
         enabled: enabled,
