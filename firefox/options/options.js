@@ -23,7 +23,7 @@ function getHostname(url) {
 }
 
 async function getStorage(item) {
-    let object = await browser.storage.local.get(item);
+    const object = await browser.storage.local.get(item);
     if (Object.keys(object).length > 0) {
         return object[item]
     } else {
@@ -33,11 +33,11 @@ async function getStorage(item) {
 
 async function saveData(event) {
     event.preventDefault();
-    let webhook = standardizeInput(webhookInput.value);
+    const webhook = standardizeInput(webhookInput.value);
     let target = standardizeInput(targetInput.value);
     target = (target == null ? undefined : getHostname(target));
-    let enabled = enabledInput.checked;
-    let username = standardizeInput(usernameInput.value);
+    const enabled = enabledInput.checked;
+    const username = standardizeInput(usernameInput.value);
 
     await browser.storage.local.set({
         webhook: webhook,
@@ -84,12 +84,12 @@ async function prefillOption() {
 
 async function changeStatus() {
     async function getStatus() {
-        let webhook = await getStorage("webhook")
-        let target = await getStorage("target");
+        const webhook = await getStorage("webhook")
+        const target = await getStorage("target");
         if (webhook == null || target == null) {
             return false
         }
-        let enabled = await getStorage("enabled")
+        const enabled = await getStorage("enabled")
         if (enabled == null) {
             return false
         }
