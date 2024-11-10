@@ -50,25 +50,13 @@ function getReminder() {
     return rowDiv
 }
 
-function getChallengeID() {
-    const modalDialog = document.querySelector("div.modal-dialog");
-    if (modalDialog) {
-        const data = modalDialog.getAttribute("x-init")
-        const match = data.match(/id\s*=\s*(\d+)/);
+function getChallengeName() {
+    let urlParts = document.URL.split('#');
 
-        if (match) {
-            return parseInt(match[1], 10)
-        }
-    }
+    return (urlParts.length > 1) ? urlParts[1] : null;
 }
 
-async function getSession() {
-}
-
-async function getChallengeDetails() {
-}
-
-async function sendDiscordDetails(details, submission) {
+async function sendDiscordDetails(challengeName, submission) {
     const webhook = await getStorage("webhook")
     const username = await getStorage("username")
 
@@ -80,14 +68,11 @@ async function sendDiscordDetails(details, submission) {
         body: JSON.stringify({
             embeds: [
                 {
-                    title: details.name,
+                    title: challengeName,
                     description: "`" + submission + "`",
                     timestamp: new Date().toISOString(),
                     author: {
                         name: (username != null) ? username + " submitted:" : "Unknown user submitted:",
-                    },
-                    footer: {
-                        text: "Worth " + details.value + " points, " + details.solves + " solves at submission",
                     }
                 }
             ]
@@ -96,7 +81,11 @@ async function sendDiscordDetails(details, submission) {
 }
 
 async function submitAttempt(submission) {
-    getSession()
+    const anchor = decodeURI(getChallengeName()).split("-")
+    const challengeName = anchor[0]
+    const challengeID = anchor[1] // maybe use in api later, but need to figure out auth
+
+    await sendDiscordDetails(challengeName, submission)
 }
 
 function addListener() {
@@ -111,7 +100,7 @@ function addListener() {
         submitButton.addEventListener("click", (event) => {
             event.stopImmediatePropagation();
             event.preventDefault();
-            submitAttempt(challengeInput.innerText);
+            submitAttempt(challengeInput.value);
         });
 
         let hasReminder = false
@@ -128,6 +117,14 @@ function addListener() {
     }
 }
 
+function removeReminder() {
+    const reminder = document.getElementById("flagvault");
+
+    if (reminder) {
+        reminder.remove();
+    }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     let enable = await shouldHook()
     if (!enable) {
@@ -137,8 +134,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     let challengeWindow = document.getElementById("challenge-window")
     new MutationObserver(() => {
         if (challengeWindow.style.display !== "block") {
-            return
+            removeReminder()
+        } else {
+            addListener()
         }
-        addListener()
     }).observe(challengeWindow, {attributes: true, attributeFilter: ["style"]});
 })
