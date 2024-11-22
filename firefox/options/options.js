@@ -1,12 +1,13 @@
 const webhookInput = document.getElementById("webhook");
 const targetInput = document.getElementById("target");
+const submissionInput = document.getElementById("submission");
 const enabledInput = document.getElementById("enabled");
 const usernameInput = document.getElementById("username");
+const nameInput = document.getElementById("name");
 
 const form = document.getElementById("form");
-const body = document.querySelector("body");
 
-const status = document.getElementById("status");
+const submitButton = document.getElementById("submit");
 
 function standardizeInput(input) {
     if (input === "") {
@@ -15,72 +16,95 @@ function standardizeInput(input) {
     return input.trim()
 }
 
-async function saveWebhook(event) {
+async function getStorage(item) {
+    const object = await browser.storage.local.get(item);
+    if (Object.keys(object).length > 0) {
+        return object[item]
+    } else {
+        return undefined;
+    }
+}
+
+async function saveData(event) {
     event.preventDefault();
-    let webhook = standardizeInput(webhookInput.value);
-    let target = standardizeInput(targetInput.value);
-    target = (target.startsWith("https://") ? target : ("https://" + target))
-    target = (target.endsWith("/") ? target.slice(0, -1) : target);
-    let enabled = enabledInput.checked;
-    let username = standardizeInput(usernameInput.value);
+    const webhook = standardizeInput(webhookInput.value);
+    const target = standardizeInput(targetInput.value);
+    const submission = standardizeInput(submissionInput.value);
+    const enabled = enabledInput.checked;
+    const username = standardizeInput(usernameInput.value);
+    const name = standardizeInput(nameInput.value);
 
     await browser.storage.local.set({
         webhook: webhook,
         target: target,
+        submission: submission,
         enabled: enabled,
         username: username,
+        name: name,
     });
 
     console.log("Webhook saved successfully as " + webhook);
     console.log("Target website saved successfully as " + target);
+    console.log("Submission Field Name saved successfully as " + submission);
     console.log("Extension enabled status saved successfully as " + enabled);
     console.log("Username saved successfully as " + username);
+    console.log("Challenge Field Name saved successfully as " + name);
+
     changeStatus()
     prefillOption()
 
-    body.style.background = "green";
+    submitButton.style.background = "#00AA00";
     setTimeout(() => {
-        body.style.background = "white";
-    }, 1000);
+        submitButton.style.background = "";
+    }, 1000)
 }
 
 async function prefillOption() {
-    let webhook = await browser.storage.local.get("webhook");
-    if (Object.keys(webhook).length > 0) {
-        webhookInput.value = webhook.webhook;
+    const webhook = await getStorage("webhook");
+    if (webhook != null) {
+        webhookInput.value = webhook;
     }
 
-    let target = await browser.storage.local.get("target");
-    if (Object.keys(target).length > 0) {
-        targetInput.value = target.target;
+    const target = await getStorage("target");
+    if (target != null) {
+        targetInput.value = target;
     }
 
-    let enabled = await browser.storage.local.get("enabled");
-    if (Object.keys(enabled).length > 0) {
-        enabledInput.checked = enabled.enabled;
+    const submission = await getStorage("submission");
+    if (submission != null) {
+        submissionInput.value = submission;
     }
 
-    let username = await browser.storage.local.get("username");
-    if (Object.keys(username).length > 0) {
-        usernameInput.value = username.username;
+    const enabled = await getStorage("enabled");
+    if (enabled != null) {
+        enabledInput.checked = enabled;
+    }
+
+    const username = await getStorage("username");
+    if (username != null) {
+        usernameInput.value = username;
+    }
+
+    const name = await getStorage("name");
+    if (name != null) {
+        nameInput.value = name;
     }
 }
 
 async function changeStatus() {
-    let webhookObject = await browser.storage.local.get("webhook");
-    let targetObject = await browser.storage.local.get("target");
-    if (Object.keys(webhookObject).length <= 0 || Object.keys(targetObject).length <= 0) {
-        status.innerText = "Status: Disabled";
-        return
+    async function getStatus() {
+        const webhook = await getStorage("webhook")
+        const target = await getStorage("target");
+        const submission = await getStorage("submission");
+        if (webhook == null || target == null || submission == null) {
+            return false
+        }
+        return await getStorage("enabled")
     }
-    let enabledObject = await browser.storage.local.get("enabled");
-    if (Object.keys(enabledObject).length <= 0 && !enabledObject.enabled) {
-        status.innerText = "Status: Disabled";
-        return
-    }
-    status.innerText = "Status: Enabled";
+    const status = await getStatus()
+    submitButton.innerHTML = (status ? "Save | Status: Enabled" : "Save | Status: Disabled")
 }
 
-form.addEventListener("submit", saveWebhook);
+form.addEventListener("submit", saveData);
 document.addEventListener('DOMContentLoaded', prefillOption);
 document.addEventListener('DOMContentLoaded', changeStatus);

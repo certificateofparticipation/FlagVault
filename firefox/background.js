@@ -3,68 +3,60 @@ When an API request is made to the attempt url, the extension will read the body
 It will take the headers and send a request getting all challenges.
 It will then cancel the request and send a discord message via a webhook.
  */
-let challengeID;
 let submission;
+let name;
 
-async function returnEarly(details) {
-    let webhookObject = await browser.storage.local.get("webhook");
-    let targetObject = await browser.storage.local.get("target");
-    if (Object.keys(webhookObject).length <= 0 || Object.keys(targetObject).length <= 0) {
-        return true
+async function getStorage(item) {
+    const object = await browser.storage.local.get(item);
+    if (Object.keys(object).length > 0) {
+        return object[item]
+    } else {
+        return undefined;
     }
-    if (details.url !== targetObject.target + "/api/v1/challenges/attempt") {
-        return true
+}
+
+async function shouldHook(details) {
+    const webhook = await getStorage("webhook")
+    const target = await getStorage("target");
+    const submission = await getStorage("submission");
+    if (webhook == null || target == null || submission == null) {
+        return false
     }
-    let enabledObject = await browser.storage.local.get("enabled");
-    if (Object.keys(enabledObject).length <= 0 && !enabledObject.enabled) {
-        return true
+    if (details.url !== target) {
+        return false
     }
-    return false
+    return await getStorage("enabled");
 }
 
 async function getRequestBody(details) {
-    if (await returnEarly(details)) {
+    if (!(await shouldHook(details))) {
         return
     }
+    const submissionFieldName = await getStorage("submission");
+    const nameFieldName = await getStorage("name");
 
     let bodyObject = JSON.parse(new TextDecoder("utf-8").decode(details.requestBody.raw[0].bytes));
-    challengeID = bodyObject.challenge_id
-    submission = bodyObject.submission
+
+    submission = bodyObject[submissionFieldName];
+    if (nameFieldName == null) {
+        name = null
+    } else {
+        name = bodyObject[nameFieldName]
+    }
 }
 
 async function getRequestHeaders(details) {
-    if (await returnEarly(details)) {
+    if (!(await shouldHook(details))) {
         return
     }
     try {
-        let webhookObject = await browser.storage.local.get("webhook");
-        let targetObject = await browser.storage.local.get("target");
-        let usernameObject = await browser.storage.local.get("username");
-        // ----- fetches the challenge name ------
-        console.log("Making request for challenge details...")
-
-        const fetchHeaders = new Headers();
-        details.requestHeaders.forEach((value, key) => {
-            fetchHeaders.append(key, value);
-        });
-
-        let rawChallenges = await fetch(targetObject.target + "/api/v1/challenges/" + challengeID, {
-            method: "GET",
-            headers: fetchHeaders,
-        })
-
-        let challenges = JSON.parse(await rawChallenges.text())
-        console.log("Received response to request!")
-        console.log(challenges)
-
-        let challengeName = challenges.data.name
-        let challengePoints = challenges.data.value
-        let challengeSolves = challenges.data.solves
+        const webhook = await getStorage("webhook")
+        const username = await getStorage("username");
 
         // ----- sends discord message ------
         console.log("Sending discord message...")
 
-        await fetch(webhookObject.webhook, {
+        await fetch(webhook, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -72,14 +64,11 @@ async function getRequestHeaders(details) {
             body: JSON.stringify({
                 embeds: [
                     {
-                        title: challengeName,
+                        title: (name != null ? name : "Unknown Challenge Name! Please send the actual name..."),
                         description: "`" + submission + "`",
                         timestamp: new Date().toISOString(),
                         author: {
-                            name: (Object.keys(usernameObject).length > 0) ? usernameObject.username + " submitted:" : "Unknown user submitted:",
-                        },
-                        footer: {
-                            text: "Worth " + challengePoints + " points, " + challengeSolves + " solves at submission",
+                            name: (username != null ? username + " submitted:" : "Unknown user submitted:")
                         }
                     }
                 ]
