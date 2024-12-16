@@ -1,10 +1,6 @@
 # FlagVault
 
-## SECRET!!! DO NOT LEAK
-
-A browser extension to automatically flag hoard on CTFd websites.
-
-Currently only Firefox is supported.
+An alternative version that works on most CTF websites.
 
 # Installation
 
