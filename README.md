@@ -1,7 +1,5 @@
 # FlagVault
 
-## SECRET!!! DO NOT LEAK
-
 A browser extension to automatically flag hoard on CTFd websites.
 
 When active, all submissions of answers will be sent to a discord webhook of your choice.
